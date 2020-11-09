@@ -6,8 +6,9 @@ const token = process.env.TOKEN;
 const port = (process.env.PORT || 8443);
 const host = process.env.HOST;
 console.log("port: " + port)
+console.log("host: " + host)
 const TeleBot = require('telebot');
-const usePlugins = ['commandButton']; //, 'namedButtons', 'commandButton' , 'floodProtection'
+// const usePlugins = ['commandButton']; //, 'namedButtons', 'commandButton' , 'floodProtection'
 // const pluginFolder = '../plugins/';
 // const pluginConfig = {
 //     floodProtector: {
@@ -18,23 +19,18 @@ const usePlugins = ['commandButton']; //, 'namedButtons', 'commandButton' , 'flo
 //const BUTTONS = require('./buttons').buttons; //not realy needed
 
 let bot;
-if (true) {
-  console.log('----Production----')
-  bot = new TeleBot({
-    token,
-    usePlugins,
-    // pluginConfig,
-    webHook: { port: port, host: host }
-  });
-} else {
-  console.log('----non-Production----')
-  bot = new TeleBot({
-    token,
-    usePlugins,
-    // pluginConfig,
-    polling: true
-  });
-};
+
+console.log('----Production----')
+bot = new TeleBot({
+  token,
+  // usePlugins,
+  // pluginConfig,
+  webHook: { port: port, host: host }
+});
+
+let info = bot.getWebhookInfo()
+
+console.log(info)
 
 bot.getMe().then(function (me) { //self check
   const botName = me.username;
