@@ -1,13 +1,8 @@
-const token = process.env.TOKEN;
-const port = (process.env.PORT || 8443);
-const TeleBot = require('telebot');
-
-const Bot = require('node-telegram-bot-api');
-let bot;
 'use strict';
 
 require('dotenv').config()
-const token = process.env.TELEGRAM_TOKEN;
+
+const token = process.env.TOKEN;
 const port = (process.env.PORT || 8443);
 const host = process.env.HOST;
 console.log("port: " + port)
