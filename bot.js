@@ -8,7 +8,7 @@ const host = process.env.HEROKU_URL;
 console.log("port: " + port)
 console.log("host: " + host)
 const TeleBot = require('telebot');
-// const usePlugins = ['commandButton']; //, 'namedButtons', 'commandButton' , 'floodProtection'
+const usePlugins = []; //'commandButton', 'namedButtons', 'commandButton' , 'floodProtection'
 // const pluginFolder = '../plugins/';
 // const pluginConfig = {
 //     floodProtector: {
@@ -23,7 +23,7 @@ let bot;
 console.log('----Production----')
 bot = new TeleBot({
   token,
-  // usePlugins,
+  usePlugins,
   // pluginConfig,
   webHook: { port: port, host: host }
 });
