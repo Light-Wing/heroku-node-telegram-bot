@@ -4,36 +4,50 @@ const TeleBot = require('telebot');
 
 const Bot = require('node-telegram-bot-api');
 let bot;
+'use strict';
 
-if (process.env.NODE_ENV === 'production') {
+require('dotenv').config()
+const token = process.env.TELEGRAM_TOKEN;
+const port = (process.env.PORT || 8443);
+const host = process.env.HOST;
+console.log("port: " + port)
+const TeleBot = require('telebot');
+const usePlugins = ['commandButton']; //, 'namedButtons', 'commandButton' , 'floodProtection'
+// const pluginFolder = '../plugins/';
+// const pluginConfig = {
+//     floodProtector: {
+//         interval: 2,
+//         message: 'Too many messages, relax!'
+//     }
+// };
+//const BUTTONS = require('./buttons').buttons; //not realy needed
+
+let bot;
+if (true) {
+  console.log('----Production----')
   bot = new TeleBot({
-    token: token,
-    webhook: {
-      // Self-signed certificate:
-      // key: './key.pem',
-      // cert: './cert.pem',
-      //url: 'https://....',
-      host: '0.0.0.0',
-      port: port
-    }
+    token,
+    usePlugins,
+    // pluginConfig,
+    webHook: { port: port, host: host }
   });
-  bot.setWebHook(process.env.HEROKU_URL + "/" + bot.token);
-}
-else {
-  bot = new Bot(token, { polling: true });
-}
-
-console.log('Bot server started in the ' + process.env.NODE_ENV + ' mode');
-console.log('heroku url' + process.env.HEROKU_URL);
-
-bot.on('message', (msg) => {
-  const name = msg.from.first_name;
-  bot.sendMessage(msg.chat.id, 'Hello, ' + name + '!').then(() => {
-    // reply sent!
+} else {
+  console.log('----non-Production----')
+  bot = new TeleBot({
+    token,
+    usePlugins,
+    // pluginConfig,
+    polling: true
   });
-});
+};
+
+bot.getMe().then(function (me) { //self check
+  const botName = me.username;
+  console.log('---\nHello! My name is %s!', me.first_name);
+  console.log(`And my username is @${botName}\n---`);
+  return botName;
+})
+
 bot.on('text', msg => bot.sendMessage(msg.from.id, msg.text));
+
 bot.start();
-
-
-module.exports = bot;
