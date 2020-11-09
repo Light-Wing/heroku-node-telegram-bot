@@ -43,6 +43,8 @@ bot.getMe().then(function (me) { //self check
   return botName;
 })
 
-bot.on('text', msg => bot.sendMessage(msg.from.id, msg.text + "test nodejs bot"));
+bot.on('text', msg => bot.sendMessage(msg.from.id, msg.text + "test nodejs bot")).then(
+  console.log('text test nodejs bot')
+);
 
 bot.start();
