@@ -28,7 +28,7 @@ bot = new TeleBot({
   webHook: { port: port, host: host }
 });
 
-let info = await bot.getWebhookInfo()
+async let info = await bot.getWebhookInfo()
 
 console.log(info)
 
