@@ -1,10 +1,22 @@
 const token = process.env.TOKEN;
+const port = (process.env.PORT || 8443);
+const TeleBot = require('telebot');
 
 const Bot = require('node-telegram-bot-api');
 let bot;
 
 if (process.env.NODE_ENV === 'production') {
-  bot = new Bot(token);
+  bot = new TeleBot({
+    token: token,
+    webhook: {
+      // Self-signed certificate:
+      // key: './key.pem',
+      // cert: './cert.pem',
+      //url: 'https://....',
+      host: '0.0.0.0',
+      port: port
+    }
+  });
   bot.setWebHook(process.env.HEROKU_URL + "/" + bot.token);
 }
 else {
@@ -20,5 +32,8 @@ bot.on('message', (msg) => {
     // reply sent!
   });
 });
+bot.on('text', msg => bot.sendMessage(msg.from.id, msg.text));
+bot.start();
+
 
 module.exports = bot;
