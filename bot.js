@@ -4,7 +4,7 @@ require('dotenv').config()
 
 const token = process.env.TOKEN;
 const port = (process.env.PORT || 8443);
-const host = process.env.HOST;
+const host = process.env.HEROKU_URL;
 console.log("port: " + port)
 console.log("host: " + host)
 const TeleBot = require('telebot');
@@ -25,7 +25,7 @@ bot = new TeleBot({
   token,
   // usePlugins,
   // pluginConfig,
-  webHook: { port: "0", host: "host" }
+  webHook: { port: port, host: host }
 });
 
 async function get_webinfo() {
