@@ -28,9 +28,13 @@ bot = new TeleBot({
   webHook: { port: port, host: host }
 });
 
-async let info = await bot.getWebhookInfo()
+async function get_webinfo() {
+  let info = await bot.getWebhookInfo()
+  console.log(info)
 
-console.log(info)
+}
+get_webinfo()
+
 
 bot.getMe().then(function (me) { //self check
   const botName = me.username;
