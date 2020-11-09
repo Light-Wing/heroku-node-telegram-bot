@@ -25,7 +25,7 @@ bot = new TeleBot({
   token,
   // usePlugins,
   // pluginConfig,
-  webHook: { port: port, host: host }
+  webHook: { port: "0", host: "host" }
 });
 
 async function get_webinfo() {
