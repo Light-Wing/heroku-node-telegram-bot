@@ -23,7 +23,6 @@ bot = new TeleBot({
     // , host: url 
   }
 });
-bot.setWebHook(`${url}/bot${token}`);
 
 // async function get_webinfo() {
 //   let info = await bot.getWebhookInfo()
