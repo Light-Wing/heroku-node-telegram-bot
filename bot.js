@@ -6,7 +6,7 @@ const token = process.env.TOKEN;
 const port = (process.env.PORT || 8443);
 const url = process.env.HEROKU_URL;
 console.log("port: " + port)
-console.log("host: " + host)
+console.log("url: " + url)
 const TeleBot = require('telebot');
 const usePlugins = [];
 
