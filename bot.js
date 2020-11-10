@@ -47,7 +47,7 @@ bot.on('text', msg => bot.sendMessage(msg.from.id, " test nodejs bot").then(
   console.log('text test nodejs bot')
 ));
 
-// bot.start();
+bot.start();
 
 
 
