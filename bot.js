@@ -28,26 +28,26 @@ bot = new TeleBot({
   webHook: { port: port, host: host }
 });
 
-async function get_webinfo() {
-  let info = await bot.getWebhookInfo()
-  console.log(info)
+// async function get_webinfo() {
+//   let info = await bot.getWebhookInfo()
+//   console.log(info)
 
-}
-get_webinfo()
+// }
+// get_webinfo()
 
 
-bot.getMe().then(function (me) { //self check
-  const botName = me.username;
-  console.log('---\nHello! My name is %s!', me.first_name);
-  console.log(`And my username is @${botName}\n---`);
-  return botName;
-})
+// bot.getMe().then(function (me) { //self check
+//   const botName = me.username;
+//   console.log('---\nHello! My name is %s!', me.first_name);
+//   console.log(`And my username is @${botName}\n---`);
+//   return botName;
+// })
 
-bot.on('text', msg => bot.sendMessage(msg.from.id, msg.text + "test nodejs bot").then(
+bot.on('text', msg => bot.sendMessage(msg.from.id, " test nodejs bot").then(
   console.log('text test nodejs bot')
 ));
 
-bot.start();
+// bot.start();
 
 
 
