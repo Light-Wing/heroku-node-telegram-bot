@@ -20,9 +20,11 @@ dispatcher = updater.dispatcher
 
 
 def start(update, context):
-	text = "/start - " + str(update.effective_user.id) + " - " + str(update.effective_user.first_name) +
-                " " + str(update.effective_user.last_name)
+	text = "/start - " + str(update.effective_user.id) + " - " + str(
+	    update.effective_user.first_name) + " " + str(update.effective_user.last_name)
+
     LOGGER.info(text)
+
 	update.effective_message.reply_text(text)
 
 def main():
