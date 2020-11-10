@@ -12,7 +12,9 @@
 
 # TOKEN = os.environ.get('TOKEN', None)
 # HEROKU_URL = os.environ.get('HEROKU_URL', '')
-# PORT = int(os.environ.get('PORT', 8443))
+import logging
+from http.server import BaseHTTPRequestHandler, HTTPServer
+PORT = int(os.environ.get('PORT', 8443))
 
 
 # updater = tg.Updater(TOKEN, use_context=True)
@@ -57,9 +59,6 @@
 # if __name__ == '__main__':
 #     main()
 
-from http.server import BaseHTTPRequestHandler, HTTPServer
-import logging
-
 
 class S(BaseHTTPRequestHandler):
     def _set_response(self):
@@ -87,7 +86,7 @@ class S(BaseHTTPRequestHandler):
             self.path).encode('utf-8'))
 
 
-def run(server_class=HTTPServer, handler_class=S, port=8080):
+def run(server_class=HTTPServer, handler_class=S, port=PORT):
     logging.basicConfig(level=logging.INFO)
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
