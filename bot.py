@@ -3,13 +3,14 @@
 import os
 import logging
 import telegram.ext as tg
+from telegram.ext import CommandHandler
 
 logging.basicConfig(
     format="%(name)s:%(levelname)s - %(message)s",  # %(asctime)s -
     level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
-TOKEN = os.environ.get('TG_API_KEY', None)
+TOKEN = os.environ.get('TOKEN', None)
 HEROKU_URL = os.environ.get('HEROKU_URL', '')
 PORT = int(os.environ.get('PORT', 8443))
 
@@ -20,12 +21,14 @@ dispatcher = updater.dispatcher
 
 
 def start(update, context):
-	text = "/start - " + str(update.effective_user.id) + " - " + str(
-	    update.effective_user.first_name) + " " + str(update.effective_user.last_name)
+    text = "/start - " + str(update.effective_user.id) +\
+        " - " + str(update.effective_user.first_name) + \
+        " " + str(update.effective_user.last_name)
 
     LOGGER.info(text)
 
-	update.effective_message.reply_text(text)
+    update.effective_message.reply_text(text)
+
 
 def main():
     dp = dispatcher
@@ -33,8 +36,7 @@ def main():
     LOGGER.info(
         "\n"+"-"*20+f"\nbot username: {bot_me.username} \nbot full_name: {bot_me.full_name}\n"+"-"*20)
 
-
-	dp.add_handler(CommandHandler('start', start))
+    dp.add_handler(CommandHandler('start', start))
 
     LOGGER.info("Using webhooks.")
 
