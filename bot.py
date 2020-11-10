@@ -1,6 +1,6 @@
 
 
-import os
+# import os
 # import logging
 # import telegram.ext as tg
 # from telegram.ext import CommandHandler
@@ -12,9 +12,7 @@ import os
 
 # TOKEN = os.environ.get('TOKEN', None)
 # HEROKU_URL = os.environ.get('HEROKU_URL', '')
-import logging
-from http.server import BaseHTTPRequestHandler, HTTPServer
-PORT = int(os.environ.get('PORT', 8443))
+# PORT = int(os.environ.get('PORT', 8443))
 
 
 # updater = tg.Updater(TOKEN, use_context=True)
@@ -60,49 +58,128 @@ PORT = int(os.environ.get('PORT', 8443))
 #     main()
 
 
-class S(BaseHTTPRequestHandler):
-    def _set_response(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
+import http.server
+import requests
+import os
+from urllib.parse import unquote, parse_qs
+import threading
+from socketserver import ThreadingMixIn
 
+memory = {}
+
+form = '''<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <meta name="robots" content="abdennour,nanodegree,python,fullstack,udacity,toumi" />
+    <title>Shortner links</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  </head>
+  <body>
+    <main class="container mt-5">
+       <div>
+            <form method="POST">
+                <section>
+                   <h2>Shortener</h2>
+                   <div class="form-group">
+                     <label for="longuri">Long URI: </label>
+                     <input name="longuri" id="longuri" class="form-control" placeholder="Your long Link http://...">
+                   </div>
+                   <div class="form-group">
+                     <label for="shortname">Short name:</label>
+                     <input name="shortname" id="shortname" class="form-control" placeholder="my-link">
+                   </div>
+                   <button type="submit" class="btn btn-primary">Save it!</button>
+                </section>
+             </form>
+             <hr>
+             <section>
+               <h2>URIs I know about</h2>
+               <pre>
+                 {}
+               </pre>
+             </section>
+       </div>
+    </main>
+  </body>
+</html>
+'''
+
+
+def CheckURI(uri, timeout=5):
+    '''Check whether this URI is reachable, i.e. does it return a 200 OK?
+    This function returns True if a GET request to uri returns a 200 OK, and
+    False if that GET request returns any other response, or doesn't return
+    (i.e. times out).
+    '''
+    try:
+        r = requests.get(uri, timeout=timeout)
+        # If the GET request returns, was it a 200 OK?
+        return r.status_code == 200
+    except requests.RequestException:
+        # If the GET request raised an exception, it's not OK.
+        return False
+
+
+class ThreadHTTPServer(ThreadingMixIn, http.server.HTTPServer):
+    "This is an HTTPServer that supports thread-based concurrency."
+
+
+class Shortener(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
-        # logging.info("GET request,\nPath: %s\nHeaders:\n%s\n",
-        #  str(self.path), str(self.headers))
-        self._set_response()
-        self.wfile.write("GET request for {}".format(
-            self.path).encode('utf-8'))
+        # A GET request will either be for / (the root path) or for /some-name.
+        # Strip off the / and we have either empty string or a name.
+        name = unquote(self.path[1:])
+
+        if name:
+            if name in memory:
+                # We know that name! Send a redirect to it.
+                self.send_response(303)
+                self.send_header('Location', memory[name])
+                self.end_headers()
+            else:
+                # We don't know that name! Send a 404 error.
+                self.send_response(404)
+                self.send_header('Content-type', 'text/plain; charset=utf-8')
+                self.end_headers()
+                self.wfile.write("I don't know '{}'.".format(name).encode())
+        else:
+            # Root path. Send the form.
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            # List the known associations in the form.
+            known = "\n".join("{} : {}".format(key, memory[key])
+                              for key in sorted(memory.keys()))
+            self.wfile.write(form.format(known).encode())
 
     def do_POST(self):
-        # <--- Gets the size of data
-        content_length = int(self.headers['Content-Length'])
-        # <--- Gets the data itself
-        post_data = self.rfile.read(content_length)
-        # logging.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
-        #  str(self.path), str(self.headers), post_data.decode('utf-8'))
+        # Decode the form data.
+        length = int(self.headers.get('Content-length', 0))
+        body = self.rfile.read(length).decode()
+        params = parse_qs(body)
+        longuri = params["longuri"][0]
+        shortname = params["shortname"][0]
 
-        self._set_response()
-        self.wfile.write("POST request for {}".format(
-            self.path).encode('utf-8'))
+        if CheckURI(longuri):
+            # This URI is good!  Remember it under the specified name.
+            memory[shortname] = longuri
 
-
-def run(server_class=HTTPServer, handler_class=S, port=PORT):
-    logging.basicConfig(level=logging.INFO)
-    server_address = ('', port)
-    httpd = server_class(server_address, handler_class)
-    logging.info('Starting httpd...\n')
-    try:
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        pass
-    httpd.server_close()
-    logging.info('Stopping httpd...\n')
+            # Serve a redirect to the form.
+            self.send_response(303)
+            self.send_header('Location', '/')
+            self.end_headers()
+        else:
+            # Didn't successfully fetch the long URI.
+            self.send_response(404)
+            self.send_header('Content-type', 'text/plain; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(
+                "Couldn't fetch URI '{}'. Sorry!".format(longuri).encode())
 
 
 if __name__ == '__main__':
-    from sys import argv
-
-    if len(argv) == 2:
-        run(port=int(argv[1]))
-    else:
-        run()
+    server_address = ('', int(os.environ.get('PORT', '8000')))
+    httpd = ThreadHTTPServer(server_address, Shortener)
+    httpd.serve_forever()
