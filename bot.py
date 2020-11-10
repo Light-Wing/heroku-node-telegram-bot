@@ -33,8 +33,7 @@ def start(update, context):
 def main():
     dp = dispatcher
     bot_me = dp.bot.get_me()
-    LOGGER.info(
-        "\n"+"-"*20+f"\nbot username: {bot_me.username} \nbot full_name: {bot_me.full_name}\n"+"-"*20)
+    LOGGER.info("\n"+"-"*20+f"\nbot username: {bot_me.username} \nbot full_name: {bot_me.full_name}\n"+"-"*20)
 
     dp.add_handler(CommandHandler('start', start))
 
