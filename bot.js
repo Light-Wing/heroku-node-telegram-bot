@@ -13,11 +13,8 @@ const usePlugins = [];
 let bot;
 
 //-----------------------------------
-// on server dyno: error
-//heroku[router]: at=error code=H14 desc="No web processes running" method=POST path="/bot1414851391:AAGghb5kBvGlil8kRX8gHfuqzbMmRWYf3DQ" host=test-tgbot5.herokuapp.com request_id=02b62f1e-0316-4bb0-a62b-7cf218de4e1a fwd="91.108.6.84" dyno=      connect=    service=    status=503 bytes=   protocol=https
-
-// on web dyno: ok
-//heroku[router]: at=info                                           method=POST path="/bot1414851391:AAGghb5kBvGlil8kRX8gHfuqzbMmRWYf3DQ" host=test-tgbot5.herokuapp.com request_id=9e050492-ce02-438a-bcea-bc8955356463 fwd="91.108.6.84" dyno=web.1 connect=0ms service=6ms status=200 bytes=96 protocol=https
+// on server or web dyno: ok
+// no heroku[router] logs
 
 bot = new TeleBot({
   token,
@@ -55,10 +52,10 @@ bot.start();
 
 //-----------------------------------
 // on server dyno: error
-//heroku[router]: at=error code=H14 desc="No web processes running" method=POST path="/bot1414851391:AAGghb5kBvGlil8kRX8gHfuqzbMmRWYf3DQ" host=test-tgbot5.herokuapp.com request_id=02b62f1e-0316-4bb0-a62b-7cf218de4e1a fwd="91.108.6.84" dyno= connect= service= status=503 bytes= protocol=https
+//heroku[router]: at=error code=H14 desc="No web processes running" method=POST path="/token" host=test-tgbot5.herokuapp.com request_id=02b62f1e-0316-4bb0-a62b-7cf218de4e1a fwd="91.108.6.84" dyno= connect= service= status=503 bytes= protocol=https
 
 // on web dyno: ok
-//heroku[router]: at=info method=POST path="/bot1414851391:AAGghb5kBvGlil8kRX8gHfuqzbMmRWYf3DQ" host=test-tgbot5.herokuapp.com request_id=9e050492-ce02-438a-bcea-bc8955356463 fwd="91.108.6.84" dyno=web.1 connect=0ms service=6ms status=200 bytes=96 protocol=https
+//heroku[router]: at=info method=POST path="/token" host=test-tgbot5.herokuapp.com request_id=9e050492-ce02-438a-bcea-bc8955356463 fwd="91.108.6.84" dyno=web.1 connect=0ms service=6ms status=200 bytes=96 protocol=https
 
 // const TelegramBot = require("node-telegram-bot-api");
 // // Heroku routes from port :443 to $PORT
