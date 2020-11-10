@@ -4,19 +4,11 @@ require('dotenv').config()
 
 const token = process.env.TOKEN;
 const port = (process.env.PORT || 8443);
-const host = process.env.HEROKU_URL;
+const url = process.env.HEROKU_URL;
 console.log("port: " + port)
 console.log("host: " + host)
 const TeleBot = require('telebot');
-const usePlugins = []; //'commandButton', 'namedButtons', 'commandButton' , 'floodProtection'
-// const pluginFolder = '../plugins/';
-// const pluginConfig = {
-//     floodProtector: {
-//         interval: 2,
-//         message: 'Too many messages, relax!'
-//     }
-// };
-//const BUTTONS = require('./buttons').buttons; //not realy needed
+const usePlugins = [];
 
 let bot;
 
@@ -25,8 +17,13 @@ bot = new TeleBot({
   token,
   usePlugins,
   // pluginConfig,
-  webHook: { port: port, host: host }
+  webHook: {
+    port: port
+    , url: `${url}/bot${token}`
+    // , host: url 
+  }
 });
+bot.setWebHook(`${url}/bot${token}`);
 
 // async function get_webinfo() {
 //   let info = await bot.getWebhookInfo()
@@ -52,7 +49,7 @@ bot.start();
 
 
 
-// const TOKEN = process.env.TOKEN//process.env.TELEGRAM_TOKEN || 'YOUR_TELEGRAM_BOT_TOKEN';
+// // const TOKEN = process.env.TOKEN//process.env.TELEGRAM_TOKEN || 'YOUR_TELEGRAM_BOT_TOKEN';
 // const TelegramBot = require("node-telegram-bot-api");
 // const options = {
 //   webHook: {
@@ -68,8 +65,8 @@ bot.start();
 // // Add URL of your app to env variable or enable Dyno Metadata
 // // to get this automatically
 // // See: https://devcenter.heroku.com/articles/dyno-metadata
-// const url = process.env.HEROKU_URL //|| 'https://<app-name>.herokuapp.com:443';
-// const bot = new TelegramBot(TOKEN, options);
+// // const url = process.env.HEROKU_URL //|| 'https://<app-name>.herokuapp.com:443';
+// const bot = new TelegramBot(token, options);
 
 
 // // This informs the Telegram servers of the new webhook.
